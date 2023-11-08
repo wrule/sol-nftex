@@ -49,9 +49,19 @@ contract Exchange {
   }
 
   function targetedBuy(
-    address tokenAddress,
+    IERC721 erc721,
     uint256 tokenId
-  ) external {
+  ) external payable {
+    checkOperable(address(this), erc721, tokenId);
+    Order storage order = orders[address(erc721)][tokenId];
+    if (msg.value < order.price) {
 
+    }
+    address owner = erc721.ownerOf(tokenId);
+    erc721.safeTransferFrom(owner, msg.sender, tokenId);
+    (bool success1, ) = owner.call{value: order.price}("");
+    if (!success1) revert();
+    (bool success2, ) = msg.sender.call{value: msg.value - order.price}("");
+    if (!success2) revert();
   }
 }
