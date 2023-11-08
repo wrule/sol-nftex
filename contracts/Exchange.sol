@@ -11,16 +11,23 @@ contract Exchange {
       revert TokenNotExist(erc721, tokenId);
   }
 
-  function isOperable(
+  error Inoperable(
     address operator,
     IERC721 erc721,
     uint256 tokenId
-  ) public view returns (bool) {
+  );
+  function checkOperable(
+    address operator,
+    IERC721 erc721,
+    uint256 tokenId
+  ) public view {
     checkTokenExist(erc721, tokenId);
     address owner = erc721.ownerOf(tokenId);
-    return operator == owner ||
-      operator == erc721.getApproved(tokenId) ||
-      erc721.isApprovedForAll(owner, operator);
+    if (
+      operator != owner &&
+      operator != erc721.getApproved(tokenId) &&
+      !erc721.isApprovedForAll(owner, operator)
+    ) revert Inoperable(operator, erc721, tokenId);
   }
 
   function limitSell(
