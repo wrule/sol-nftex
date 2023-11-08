@@ -31,11 +31,11 @@ contract Exchange {
   }
 
   function limitSell(
-    address tokenAddress,
+    IERC721 erc721,
     uint256 tokenId,
     uint256 ethAmount
   ) external {
-    IERC721 erc721 = IERC721(tokenAddress);
+    checkOperable(msg.sender, erc721, tokenId);
   }
 
   function targetedBuy(
