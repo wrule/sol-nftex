@@ -35,7 +35,7 @@ contract Exchange {
     ) revert Inoperable(operator, erc721, tokenId);
   }
 
-  mapping(address => mapping(uint256 => Order)) orders;
+  mapping(address => mapping(uint256 => Order)) public orders;
 
   function limitSell(
     IERC721 erc721,
