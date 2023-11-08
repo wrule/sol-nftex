@@ -4,6 +4,11 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
+struct Order {
+  address owner;
+  uint256 price;
+}
+
 contract Exchange {
   error TokenNotExist(IERC721 erc721, uint256 tokenId);
   function checkTokenExist(IERC721 erc721, uint256 tokenId) public view {
@@ -30,12 +35,16 @@ contract Exchange {
     ) revert Inoperable(operator, erc721, tokenId);
   }
 
+  mapping(address => mapping(uint256 => Order)) orders;
+
   function limitSell(
     IERC721 erc721,
     uint256 tokenId,
-    uint256 ethAmount
+    uint256 ethPrice
   ) external {
     checkOperable(address(this), erc721, tokenId);
+    orders[address(erc721)][tokenId].owner = address(0);
+    orders[address(erc721)][tokenId].price = ethPrice;
   }
 
   function targetedBuy(
