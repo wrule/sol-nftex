@@ -54,9 +54,7 @@ contract Exchange {
   ) external payable {
     checkOperable(address(this), erc721, tokenId);
     Order storage order = orders[address(erc721)][tokenId];
-    if (msg.value < order.price) {
-
-    }
+    if (msg.value < order.price) revert();
     address owner = erc721.ownerOf(tokenId);
     erc721.safeTransferFrom(owner, msg.sender, tokenId);
     (bool success1, ) = owner.call{value: order.price}("");
