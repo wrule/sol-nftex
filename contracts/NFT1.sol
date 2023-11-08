@@ -5,4 +5,8 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
 contract NFT1 is ERC721Enumerable {
   constructor() ERC721("NFT1", "NFT1") ERC721Enumerable() { }
+
+  function mint() external {
+    _safeMint(msg.sender, totalSupply() + 1);
+  }
 }
