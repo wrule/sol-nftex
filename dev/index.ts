@@ -1,22 +1,14 @@
 import { NFT1, NFT2, NFT3, Token1, Token2, Token3, X } from '../typechain-types';
-import { deployContract, init, meta } from './utils';
+import { deployContract, getContract, init, meta } from './utils';
 
 async function main() {
   await meta();
-
-  const nft1 = await deployContract<NFT1>('NFT1');
-  console.log('NFT1:', await nft1.getAddress());
-  const nft2 = await deployContract<NFT2>('NFT2');
-  console.log('NFT2:', await nft2.getAddress());
-  const nft3 = await deployContract<NFT3>('NFT3');
-  console.log('NFT3:', await nft3.getAddress());
-
-  const token1 = await deployContract<Token1>('Token1');
-  console.log('Token1:', await token1.getAddress());
-  const token2 = await deployContract<Token2>('Token2');
-  console.log('Token2:', await token2.getAddress());
-  const token3 = await deployContract<Token3>('Token3');
-  console.log('Token3:', await token3.getAddress());
+  const nft1 = await getContract<NFT1>('NFT1', '0xa513E6E4b8f2a923D98304ec87F64353C4D5C853');
+  const nft2 = await getContract<NFT2>('NFT2', '0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6');
+  const nft3 = await getContract<NFT3>('NFT3', '0x8A791620dd6260079BF849Dc5567aDC3F2FdC318');
+  const token1 = await getContract<Token1>('Token1', '0x610178dA211FEF7D417bC0e6FeD39F05609AD788');
+  const token2 = await getContract<Token2>('Token2', '0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e');
+  const token3 = await getContract<Token3>('Token3', '0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0');
 }
 
 async function dev() {
