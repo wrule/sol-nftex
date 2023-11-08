@@ -35,7 +35,7 @@ contract Exchange {
     uint256 tokenId,
     uint256 ethAmount
   ) external {
-    checkOperable(msg.sender, erc721, tokenId);
+    checkOperable(address(this), erc721, tokenId);
   }
 
   function targetedBuy(
