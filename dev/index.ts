@@ -1,9 +1,9 @@
-import { X } from '../typechain-types';
+import { NFT1, X } from '../typechain-types';
 import { deployContract, init, meta } from './utils';
 
 async function main() {
   await meta();
-  const x = await deployContract<X>('X');
+  const nft1 = await deployContract<NFT1>('NFT1');
 }
 
 async function dev() {
