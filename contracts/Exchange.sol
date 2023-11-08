@@ -43,8 +43,9 @@ contract Exchange {
     uint256 ethPrice
   ) external {
     checkOperable(address(this), erc721, tokenId);
-    orders[address(erc721)][tokenId].owner = address(0);
-    orders[address(erc721)][tokenId].price = ethPrice;
+    Order storage order = orders[address(erc721)][tokenId];
+    order.owner = erc721.ownerOf(tokenId);
+    order.price = ethPrice;
   }
 
   function targetedBuy(
