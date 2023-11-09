@@ -11,9 +11,13 @@ struct Order {
 
 contract Exchange {
   error TokenNotExist(IERC721 erc721, uint256 tokenId);
-  function checkTokenExist(IERC721 erc721, uint256 tokenId) public view {
+  function _checkTokenExist(IERC721 erc721, uint256 tokenId) internal view {
     if (erc721.ownerOf(tokenId) == address(0))
       revert TokenNotExist(erc721, tokenId);
+  }
+  modifier checkTokenExist(IERC721 erc721, uint256 tokenId) {
+    _checkTokenExist(erc721, tokenId);
+    _;
   }
 
   error Inoperable(
@@ -21,34 +25,25 @@ contract Exchange {
     IERC721 erc721,
     uint256 tokenId
   );
-
+  function _checkOperable(
+    address operator,
+    IERC721 erc721,
+    uint256 tokenId
+  ) internal view checkTokenExist(erc721, tokenId) {
+    address owner = erc721.ownerOf(tokenId);
+    if (
+      operator != owner &&
+      operator != erc721.getApproved(tokenId) &&
+      !erc721.isApprovedForAll(owner, operator)
+    ) revert Inoperable(operator, erc721, tokenId);
+  }
   modifier checkOperable(
     address operator,
     IERC721 erc721,
     uint256 tokenId
   ) {
-    checkTokenExist(erc721, tokenId);
-    address owner = erc721.ownerOf(tokenId);
-    if (
-      operator != owner &&
-      operator != erc721.getApproved(tokenId) &&
-      !erc721.isApprovedForAll(owner, operator)
-    ) revert Inoperable(operator, erc721, tokenId);
+    _checkOperable(operator, erc721, tokenId);
     _;
-  }
-
-  function _checkOperable(
-    address operator,
-    IERC721 erc721,
-    uint256 tokenId
-  ) public view {
-    checkTokenExist(erc721, tokenId);
-    address owner = erc721.ownerOf(tokenId);
-    if (
-      operator != owner &&
-      operator != erc721.getApproved(tokenId) &&
-      !erc721.isApprovedForAll(owner, operator)
-    ) revert Inoperable(operator, erc721, tokenId);
   }
 
   mapping(address => mapping(uint256 => Order)) public orders;
@@ -67,7 +62,7 @@ contract Exchange {
     IERC721 erc721,
     uint256 tokenId
   ) external payable {
-    checkOperable(address(this), erc721, tokenId);
+    // checkOperable(address(this), erc721, tokenId);
     Order storage order = orders[address(erc721)][tokenId];
     if (msg.value < order.price) revert();
     address owner = erc721.ownerOf(tokenId);
