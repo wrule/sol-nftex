@@ -48,6 +48,11 @@ contract Exchange {
 
   mapping(address => mapping(uint256 => Order)) public orders;
 
+  event LimitSellEvent(
+    IERC721 erc721,
+    uint256 tokenId,
+    uint256 ethPrice
+  );
   function limitSell(
     IERC721 erc721,
     uint256 tokenId,
@@ -58,6 +63,7 @@ contract Exchange {
     Order storage order = orders[address(erc721)][tokenId];
     order.owner = msg.sender;
     order.price = ethPrice;
+    emit LimitSellEvent(erc721, tokenId, ethPrice);
   }
 
   function targetedBuy(
