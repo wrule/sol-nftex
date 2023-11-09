@@ -48,6 +48,17 @@ contract Exchange {
 
   mapping(address => mapping(uint256 => Order)) public orders;
 
+  function _orderIsValid(IERC721 erc721, uint256 tokenId) internal view {
+    Order storage order = orders[address(erc721)][tokenId];
+    if (order.owner == address(0)) revert();
+    _checkOperable(order.owner, erc721, tokenId);
+    _checkOperable(address(this), erc721, tokenId);
+  }
+  modifier orderIsValid(IERC721 erc721, uint256 tokenId) {
+    _orderIsValid(erc721, tokenId);
+    _;
+  }
+
   event LimitSellEvent(
     IERC721 indexed erc721,
     uint256 indexed tokenId,
@@ -77,7 +88,7 @@ contract Exchange {
   function targetedBuy(
     IERC721 erc721,
     uint256 tokenId
-  ) external payable checkOperable(address(this), erc721, tokenId) {
+  ) external payable orderIsValid(erc721, tokenId) {
 
     Order storage order = orders[address(erc721)][tokenId];
     if (msg.value < order.price)
@@ -94,5 +105,7 @@ contract Exchange {
       (bool changeSuccess, ) = msg.sender.call{ value: change }("");
       if (!changeSuccess) revert ChangeError(msg.sender, change);
     }
+
+    delete orders[address(erc721)][tokenId];
   }
 }
