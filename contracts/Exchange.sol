@@ -56,6 +56,10 @@ contract Exchange {
   mapping(address => mapping(uint256 => Order)) public orders;
   OrderView[] public orderViews;
 
+  function getOrderViews() external view returns (OrderView[] memory) {
+    return orderViews;
+  }
+
   function _orderIsValid(IERC721 erc721, uint256 tokenId) internal view {
     Order storage order = orders[address(erc721)][tokenId];
     if (order.owner == address(0)) revert();
