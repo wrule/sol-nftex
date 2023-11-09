@@ -78,6 +78,7 @@ contract Exchange {
     IERC721 erc721,
     uint256 tokenId
   ) external payable checkOperable(address(this), erc721, tokenId) {
+
     Order storage order = orders[address(erc721)][tokenId];
     if (msg.value < order.price)
       revert PriceNotEnough(erc721, tokenId, order.price, msg.value);
