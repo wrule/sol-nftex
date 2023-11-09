@@ -9,6 +9,13 @@ struct Order {
   uint256 price;
 }
 
+struct OrderView {
+  IERC721 erc721;
+  uint256 tokenId;
+  address owner;
+  uint256 price;
+}
+
 contract Exchange {
   error TokenNotExist(IERC721 erc721, uint256 tokenId);
   function _checkTokenExist(IERC721 erc721, uint256 tokenId) internal view {
@@ -47,6 +54,7 @@ contract Exchange {
   }
 
   mapping(address => mapping(uint256 => Order)) public orders;
+  OrderView[] public orderViews;
 
   function _orderIsValid(IERC721 erc721, uint256 tokenId) internal view {
     Order storage order = orders[address(erc721)][tokenId];
@@ -74,6 +82,8 @@ contract Exchange {
     Order storage order = orders[address(erc721)][tokenId];
     order.owner = msg.sender;
     order.price = ethPrice;
+    OrderView memory orderView = OrderView(erc721, tokenId, order.owner, order.price);
+    orderViews.push(orderView);
     emit LimitSellEvent(erc721, tokenId, ethPrice);
   }
 
