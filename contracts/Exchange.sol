@@ -81,9 +81,9 @@ contract Exchange {
       revert PriceNotEnough(erc721, tokenId, order.price, msg.value);
     address owner = erc721.ownerOf(tokenId);
     erc721.safeTransferFrom(owner, msg.sender, tokenId);
-    (bool success1, ) = owner.call{value: order.price}("");
+    (bool success1, ) = order.owner.call{ value: order.price }("");
     if (!success1) revert();
-    (bool success2, ) = msg.sender.call{value: msg.value - order.price}("");
+    (bool success2, ) = msg.sender.call{ value: msg.value - order.price }("");
     if (!success2) revert();
   }
 }
