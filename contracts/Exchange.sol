@@ -52,7 +52,9 @@ contract Exchange {
     IERC721 erc721,
     uint256 tokenId,
     uint256 ethPrice
-  ) external checkOperable(address(this), erc721, tokenId) {
+  ) external
+    checkOperable(msg.sender, erc721, tokenId)
+    checkOperable(address(this), erc721, tokenId) {
     Order storage order = orders[address(erc721)][tokenId];
     order.owner = erc721.ownerOf(tokenId);
     order.price = ethPrice;
