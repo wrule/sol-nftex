@@ -81,10 +81,12 @@ contract Exchange {
     Order storage order = orders[address(erc721)][tokenId];
     if (msg.value < order.price)
       revert PriceNotEnough(erc721, tokenId, order.price, msg.value);
+
     address owner = erc721.ownerOf(tokenId);
     erc721.safeTransferFrom(owner, msg.sender, tokenId);
-    (bool success1, ) = order.owner.call{ value: order.price }("");
-    if (!success1) revert PaymentError(order.owner, order.price);
+
+    (bool paymentSuccess, ) = order.owner.call{ value: order.price }("");
+    if (!paymentSuccess) revert PaymentError(order.owner, order.price);
 
     uint256 change = msg.value - order.price;
     if (change > 0) {
