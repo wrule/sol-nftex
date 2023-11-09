@@ -1,8 +1,10 @@
+import { ethers } from 'hardhat';
 import { Exchange, NFT1, NFT2, NFT3, Token1, Token2, Token3, X } from '../typechain-types';
-import { deployContract, getContract, init, meta } from './utils';
+import { deployContract, getContract, getSigner, init, meta } from './utils';
 
 async function main() {
   await meta();
+  // await getSigner().sendTransaction({ to: ethers.ZeroAddress, value: ethers.parseEther('1') });
 
   // await deployContract<Exchange>('Exchange');
   // return;
