@@ -72,6 +72,8 @@ contract Exchange {
     uint256 price,
     uint256 value
   );
+  error PaymentError(address target, uint256 amount);
+  error ChangeError(address target, uint256 amount);
   function targetedBuy(
     IERC721 erc721,
     uint256 tokenId
@@ -82,8 +84,12 @@ contract Exchange {
     address owner = erc721.ownerOf(tokenId);
     erc721.safeTransferFrom(owner, msg.sender, tokenId);
     (bool success1, ) = order.owner.call{ value: order.price }("");
-    if (!success1) revert();
-    (bool success2, ) = msg.sender.call{ value: msg.value - order.price }("");
-    if (!success2) revert();
+    if (!success1) revert PaymentError(order.owner, order.price);
+
+    uint256 change = msg.value - order.price;
+    if (change > 0) {
+      (bool changeSuccess, ) = msg.sender.call{ value: change }("");
+      if (!changeSuccess) revert ChangeError(msg.sender, change);
+    }
   }
 }
