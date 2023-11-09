@@ -4,8 +4,6 @@ import { deployContract, getContract, init, meta } from './utils';
 async function main() {
   await meta();
 
-
-  
   // await deployContract<Exchange>('Exchange');
   // return;
   // const nft1 = await getContract<NFT1>('NFT1', '0xa513E6E4b8f2a923D98304ec87F64353C4D5C853');
@@ -27,13 +25,13 @@ async function main() {
   // console.log(
   //   await exchange.orders('0xa513E6E4b8f2a923D98304ec87F64353C4D5C853', 1)
   // );
-  await exchange.targetedBuy(
-    '0xa513E6E4b8f2a923D98304ec87F64353C4D5C853',
-    1,
-    {
-      value: 1000
-    },
-  )
+  // await exchange.targetedBuy(
+  //   '0xa513E6E4b8f2a923D98304ec87F64353C4D5C853',
+  //   1,
+  //   {
+  //     value: 1000
+  //   },
+  // )
 }
 
 async function dev() {
