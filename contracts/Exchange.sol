@@ -21,7 +21,23 @@ contract Exchange {
     IERC721 erc721,
     uint256 tokenId
   );
-  function checkOperable(
+
+  modifier checkOperable(
+    address operator,
+    IERC721 erc721,
+    uint256 tokenId
+  ) {
+    checkTokenExist(erc721, tokenId);
+    address owner = erc721.ownerOf(tokenId);
+    if (
+      operator != owner &&
+      operator != erc721.getApproved(tokenId) &&
+      !erc721.isApprovedForAll(owner, operator)
+    ) revert Inoperable(operator, erc721, tokenId);
+    _;
+  }
+
+  function _checkOperable(
     address operator,
     IERC721 erc721,
     uint256 tokenId
@@ -41,8 +57,7 @@ contract Exchange {
     IERC721 erc721,
     uint256 tokenId,
     uint256 ethPrice
-  ) external {
-    checkOperable(address(this), erc721, tokenId);
+  ) external checkOperable(address(this), erc721, tokenId) {
     Order storage order = orders[address(erc721)][tokenId];
     order.owner = erc721.ownerOf(tokenId);
     order.price = ethPrice;
