@@ -10,7 +10,16 @@ async function main() {
   const exchange = await getContract<Exchange>('Exchange', '0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0');
   // await nft1.mint();
   console.log(await nft1.balanceOf(signer.address));
-  // console.log(exchange.orderViews);
+
+  await nft1.setApprovalForAll(await exchange.getAddress(), true);
+
+  await exchange.limitSell(
+    '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+    5,
+    ethers.parseEther('3.1'),
+  );
+
+  console.log(await exchange.getOrderViews());
 }
 
 async function dev() {
