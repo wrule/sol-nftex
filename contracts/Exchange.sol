@@ -49,8 +49,8 @@ contract Exchange {
   mapping(address => mapping(uint256 => Order)) public orders;
 
   event LimitSellEvent(
-    IERC721 erc721,
-    uint256 tokenId,
+    IERC721 indexed erc721,
+    uint256 indexed tokenId,
     uint256 ethPrice
   );
   function limitSell(
@@ -66,13 +66,19 @@ contract Exchange {
     emit LimitSellEvent(erc721, tokenId, ethPrice);
   }
 
+  error PriceNotEnough(
+    IERC721 erc721,
+    uint256 tokenId,
+    uint256 price,
+    uint256 value
+  );
   function targetedBuy(
     IERC721 erc721,
     uint256 tokenId
-  ) external payable {
-    // checkOperable(address(this), erc721, tokenId);
+  ) external payable checkOperable(address(this), erc721, tokenId) {
     Order storage order = orders[address(erc721)][tokenId];
-    if (msg.value < order.price) revert();
+    if (msg.value < order.price)
+      revert PriceNotEnough(erc721, tokenId, order.price, msg.value);
     address owner = erc721.ownerOf(tokenId);
     erc721.safeTransferFrom(owner, msg.sender, tokenId);
     (bool success1, ) = owner.call{value: order.price}("");
